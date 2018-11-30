@@ -65,6 +65,14 @@ class FG_eval {
           fg[0] += CppAD::pow(vars[delta_start +t + 1] - vars[delta_start+t],2);
           fg[0] += CppAD::pow(vars[a_start +t +1]- vars[a_start+t],2);
       }
+      // Initial constraints.
+      fg[1 + x_start] = vars[x_start];
+      fg[1 + y_start] = vars[y_start];
+      fg[1 + psi_start] = vars[psi_start];
+      fg[1 + v_start] = vars[v_start];
+      fg[1 + cte_start] = vars[cte_start];
+      fg[1 + epsi_start] = vars[epsi_start];
+      
       for (int i=1; i<N; i++) {
           
           AD<double> x0=vars[x_start+i-1];
