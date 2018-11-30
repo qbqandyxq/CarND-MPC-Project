@@ -145,10 +145,10 @@ int main() {
             state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
             //get the solution
             auto vars = mpc.Solve(state, coeffs);
-	    cout<<"333"<<endl;
+	    
             steer_value=vars[0]/deg2rad(25);
             throttle_value = vars[1];
-            cout<<"22"<<endl;
+            
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
@@ -171,15 +171,19 @@ int main() {
           //Display the waypoints/reference line
           vector<double> next_x_vals;
           vector<double> next_y_vals;
-          cout<<"4"<<endl;
-            double poly_inc = 2.5;
-            int num_points = 10;
-            for ( int i = 0; i < num_points; i++ ) {
-                double x = poly_inc * i;
-                next_x_vals.push_back( x );
-                next_y_vals.push_back(polyeval(coeffs, x) );
-            }
-		cout<<"3"<<endl;
+          for (unsigned int i = 0 ; i < ptsx.size(); ++i) {
+              next_x_vals.push_back(ptsx_transformed[i]);
+              next_y_vals.push_back(ptsy_transformed[i]);
+              
+          }
+//            double poly_inc = 2.5;
+//            int num_points = 10;
+//            for ( int i = 0; i < num_points; i++ ) {
+//                double x = poly_inc * i;
+//                next_x_vals.push_back( x );
+//                next_y_vals.push_back(polyeval(coeffs, x) );
+//            }
+		
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
             
