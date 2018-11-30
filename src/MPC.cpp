@@ -154,6 +154,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
         vars_lowerbound[i]=-1.0;
         vars_upperbound[i]=1.0;
     }
+    cout<<"1"<<endl;
   // Lower and upper limits for the constraints
   // Should be 0 besides initial state.
   Dvector constraints_lowerbound(n_constraints);
@@ -164,6 +165,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   }
   // object that computes objective and constraints
   FG_eval fg_eval(coeffs);
+    cout<<"2"<<endl;
   //
   // NOTE: You don't have to worry about these options
   //
