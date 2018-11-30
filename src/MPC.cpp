@@ -154,7 +154,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
         vars_lowerbound[i]=-1.0;
         vars_upperbound[i]=1.0;
     }
-    cout<<"1"<<endl;
+    
   // Lower and upper limits for the constraints
   // Should be 0 besides initial state.
   Dvector constraints_lowerbound(n_constraints);
@@ -185,9 +185,11 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   options += "Numeric max_cpu_time          0.5\n";
 
   // place to return solution
+    cout<<"22"<<endl;
   CppAD::ipopt::solve_result<Dvector> solution;
 
   // solve the problem
+    cout<<"3"<<endl;
   CppAD::ipopt::solve<Dvector, FG_eval>(
       options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
       constraints_upperbound, fg_eval, solution);
@@ -209,6 +211,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     //    final_output.push_back(solution.x[x_start+i]);
     //    final_output.push_back(solution.x[y_start+i]);
    // }
+    cout<<"4"<<endl;
 	final_output.push_back(solution.x[delta_start]);
 	final_output.push_back(solution.x[a_start]);
 	for(int i=0;i<N-2;i++){
