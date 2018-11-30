@@ -153,6 +153,10 @@ int main() {
             Eigen::VectorXd state(6);
             state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
 
+            //get the solution
+            auto vars = mpc.Solve(state, coeffs);
+            steer_value=vars[0]/deg2rad(25);
+            throttle = vars[1];
             
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -163,7 +167,10 @@ int main() {
           //Display the MPC predicted trajectory 
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
-
+            for(int i=2; i<mpc.N; i+2){
+                mpc_x_vals.push_back(vars[i]);
+                mpc_y_vals.push_back(vars[i+1]);
+            }
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
 
@@ -174,9 +181,16 @@ int main() {
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
+            double poly_inc = 2.5;
+            int num_points = 10;
+            for ( int i = 0; i < num_points; i++ ) {
+                double x = poly_inc * i;
+                next_x_vals.push_back( x );
+                next_y_vals.push_back(polyeval(coeffs, x) );
+            }
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
-
+            
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
