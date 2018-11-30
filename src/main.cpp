@@ -141,14 +141,14 @@ int main() {
             double v_delay = v + a * latency;
             double cte_delay = cte0 + ( v * sin(epsi0) * latency );
             double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-            Eigen::VectorXd state(6);
+	    Eigen::VectorXd state(6);
             state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
-
             //get the solution
             auto vars = mpc.Solve(state, coeffs);
+	    cout<<"333"<<endl;
             steer_value=vars[0]/deg2rad(25);
             throttle_value = vars[1];
-            
+            cout<<"22"<<endl;
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
