@@ -112,13 +112,11 @@ int main() {
           double throttle_value=0.0;
 //            100ms latency.
             double latency = 0.1;
-//            psi += -v*delta/Lf*latency/2.67;
         size_t n_waypoints = ptsx.size();
         auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
         auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
 //            VectorXd<double> ptsx_transformed(n_waypoints);
 //            VectorXd<double> ptsy_transformed(n_waypoints);
-            
         for (unsigned int i = 0; i < n_waypoints; i++ ) {
             double dX = ptsx[i] - px;
             double dY = ptsy[i] - py;
@@ -143,10 +141,6 @@ int main() {
             double v_delay = v + a * latency;
             double cte_delay = cte0 + ( v * sin(epsi0) * latency );
             double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-            
-            
-//            double epsi = -atan(coeffs[1]);
-            
             Eigen::VectorXd state(6);
             state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
 
@@ -164,7 +158,7 @@ int main() {
           //Display the MPC predicted trajectory 
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
-            for(int i=2; i<vars.size(); i+2){
+            for(int i=2; i<vars.size(); i=i+2){
                 mpc_x_vals.push_back(vars[i]);
                 mpc_y_vals.push_back(vars[i+1]);
             }
@@ -177,7 +171,7 @@ int main() {
           //Display the waypoints/reference line
           vector<double> next_x_vals;
           vector<double> next_y_vals;
-
+          cout<<"4"<<endl;
             double poly_inc = 2.5;
             int num_points = 10;
             for ( int i = 0; i < num_points; i++ ) {
@@ -185,6 +179,7 @@ int main() {
                 next_x_vals.push_back( x );
                 next_y_vals.push_back(polyeval(coeffs, x) );
             }
+		cout<<"3"<<endl;
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
             
