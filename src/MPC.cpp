@@ -106,8 +106,8 @@ class FG_eval {
       }
   }
 };
-
-//
+MPC::MPC() {}
+MPC::~MPC() {}
 // MPC class definition implementation.
 //
 vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
@@ -239,8 +239,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     return result;
 }
 
-//MPC::MPC() {}
-//MPC::~MPC() {}
+
 //
 //vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 //  bool ok = true;
