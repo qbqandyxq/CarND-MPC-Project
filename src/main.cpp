@@ -153,7 +153,7 @@ int main() {
             //get the solution
             auto vars = mpc.Solve(state, coeffs);
             steer_value=vars[0]/deg2rad(25);
-            throttle = vars[1];
+            throttle_value = vars[1];
             
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.

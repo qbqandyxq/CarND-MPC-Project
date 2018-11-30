@@ -48,7 +48,7 @@ class FG_eval {
     // the Solver function below.
       fg[0]=0;
       // The part of the cost based on the reference state.
-      for(int i=0;t<N; t++){
+      for(int t=0;t<N; t++){
           fg[0] += CppAD::pow(vars[cte_start+t], 2);
           fg[0] += CppAD::pow(vars[epsi_start+t], 2);
           fg[0] += CppAD::pow(vars[v_start+t],2);
@@ -69,15 +69,15 @@ class FG_eval {
           
           AD<double> x0=vars[x_start+i-1];
           AD<double> y0=vars[y_start+i];
-          AD<double> psi0=vars[pis_start+i-1];
+          AD<double> psi0=vars[psi_start+i-1];
           AD<double> v0=vars[v_start+i-1];
           AD<double> cte0=vars[cte_start+i-1];
           AD<double> epsi0=vars[epsi_start + i -1];
           
           //
           AD<double> x1=vars[x_start+i];
-          AD<double> y1=vars[y_start+i]
-          AD<double> psi1=vars[pis_start+i];
+          AD<double> y1=vars[y_start+i];
+          AD<double> psi1=vars[psi_start+i];
           AD<double> v1=vars[v_start+i];
           AD<double> cte1=vars[cte_start+i];
           AD<double> epsi1=vars[epsi_start + i];
@@ -90,7 +90,7 @@ class FG_eval {
           
           fg[1 + x_start + i] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
           fg[1 + y_start + i] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
-          fg[1 + psi_start + i] = psi1 - (psi0 + v0/Lf * delta0 * df;
+          fg[1 + psi_start + i] = psi1 - (psi0 + v0/Lf * delta0 * dt;
           fg[1 + v_start + i] = v1 - (v0 + a0*dt);
           fg[1 + cte_start + i] = cte1 - ((f0-y0) + (v0*CppAD::sin(epsi0)*dt));
           fg[1 + epsi_start + i] = epsi1 - ((psi0-psides0) + v0 * delta0/Lf *dt);
@@ -127,22 +127,22 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   // SHOULD BE 0 besides initial state.
   Dvector vars(n_vars);
-  for (int i = 0; i < n_vars; i++) {
+  for (int i = 0; i < n_vars; i++){
     vars[i] = 0;
   }
 
   Dvector vars_lowerbound(n_vars);
   Dvector vars_upperbound(n_vars);
   // TODO: Set lower and upper limits for variables.
-    for (unsigned int i=0; i<delta_start; i++) {
+    for (int i=0; i<delta_start; i++){
         vars_lowerbound[i]=-1e10;
         vars_upperbound[i]=1e10;
     }
-    for (unsigned in i=delta_start; i<a_start; i++) {
+    for (in i=delta_start; i < a_start;i++){
         vars_lowerbound[i]=-0.436332;
         vars_upperbound[i] = 0.436332;
     }
-    for (unsigned int i=a_start; i<n_vars; i++) {
+    for (int i=a_start; i<n_vars; i++){
         vars_lowerbound[i]=-1.0;
         vars_upperbound[i]=1.0;
     }
