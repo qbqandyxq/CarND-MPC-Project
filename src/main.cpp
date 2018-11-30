@@ -101,7 +101,6 @@ int main() {
              steering_angle (float) - The current steering angle in radians.
              throttle (float) - The current throttle value [-1, 1].
              speed (float) - The current velocity in mph.
-             
              */
             double delta= j[1]["steering_angle"];
             double a = j[1]["throttle"];

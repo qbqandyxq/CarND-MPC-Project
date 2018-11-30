@@ -20,6 +20,7 @@ using CppAD::AD;
 //
 // This is the length from front to CoG that has a similar radius.
 //const double Lf = 2.67;
+using namespace std;
 size_t x_start=0;
 size_t y_start=x_start+N;
 size_t psi_start = y_start +N;
