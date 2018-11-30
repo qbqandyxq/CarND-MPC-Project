@@ -76,7 +76,7 @@ class FG_eval {
           
           //
           AD<double> x1=vars[x_start+i];
-          Ad<double> y1=vars[y_start+i]
+          AD<double> y1=vars[y_start+i]
           AD<double> psi1=vars[pis_start+i];
           AD<double> v1=vars[v_start+i];
           AD<double> cte1=vars[cte_start+i];
