@@ -163,6 +163,20 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     constraints_lowerbound[i] = 0;
     constraints_upperbound[i] = 0;
   }
+    constraints_lowerbound[x_start] = x;
+    constraints_lowerbound[y_start] = y;
+    constraints_lowerbound[psi_start] = psi;
+    constraints_lowerbound[v_start] = v;
+    constraints_lowerbound[cte_start] = cte;
+    constraints_lowerbound[epsi_start] = epsi;
+    
+    constraints_upperbound[x_start] = x;
+    constraints_upperbound[y_start] = y;
+    constraints_upperbound[psi_start] = psi;
+    constraints_upperbound[v_start] = v;
+    constraints_upperbound[cte_start] = cte;
+    constraints_upperbound[epsi_start] = epsi;
+    
   // object that computes objective and constraints
   FG_eval fg_eval(coeffs);
     
@@ -189,14 +203,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   CppAD::ipopt::solve_result<Dvector> solution;
 
   // solve the problem
-    cout<<"3"<<endl;
+    
   CppAD::ipopt::solve<Dvector, FG_eval>(
       options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
       constraints_upperbound, fg_eval, solution);
-    cout<<"33"<<endl;
+    
   // Check some of the solution values
   ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
-    cout<<"333"<<endl;
+    
   // Cost
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
