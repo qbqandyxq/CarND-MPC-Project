@@ -169,7 +169,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     constraints_lowerbound[v_start] = v;
     constraints_lowerbound[cte_start] = cte;
     constraints_lowerbound[epsi_start] = epsi;
-    
+
     constraints_upperbound[x_start] = x;
     constraints_upperbound[y_start] = y;
     constraints_upperbound[psi_start] = psi;
@@ -178,59 +178,110 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     constraints_upperbound[epsi_start] = epsi;
     
   // object that computes objective and constraints
-  FG_eval fg_eval(coeffs);
+    FG_eval fg_eval(coeffs);
     
-  //
-  // NOTE: You don't have to worry about these options
-  //
-  // options for IPOPT solver
-  std::string options;
-  // Uncomment this if you'd like more print information
-  options += "Integer print_level  0\n";
-  // NOTE: Setting sparse to true allows the solver to take advantage
-  // of sparse routines, this makes the computation MUCH FASTER. If you
-  // can uncomment 1 of these and see if it makes a difference or not but
-  // if you uncomment both the computation time should go up in orders of
-  // magnitude.
-  options += "Sparse  true        forward\n";
-  options += "Sparse  true        reverse\n";
-  // NOTE: Currently the solver has a maximum time limit of 0.5 seconds.
-  // Change this as you see fit.
-  options += "Numeric max_cpu_time          0.5\n";
-
-  // place to return solution
+    //
+    // NOTE: You don't have to worry about these options
+    //
+    // options for IPOPT solver
+    std::string options;
+    // Uncomment this if you'd like more print information
+    options += "Integer print_level  0\n";
+    // NOTE: Setting sparse to true allows the solver to take advantage
+    // of sparse routines, this makes the computation MUCH FASTER. If you
+    // can uncomment 1 of these and see if it makes a difference or not but
+    // if you uncomment both the computation time should go up in orders of
+    // magnitude.
+    options += "Sparse  true        forward\n";
+    options += "Sparse  true        reverse\n";
+    // NOTE: Currently the solver has a maximum time limit of 0.5 seconds.
+    // Change this as you see fit.
+    options += "Numeric max_cpu_time          0.5\n";
     
-  CppAD::ipopt::solve_result<Dvector> solution;
-
-  // solve the problem
+    // place to return solution
+    CppAD::ipopt::solve_result<Dvector> solution;
     
-  CppAD::ipopt::solve<Dvector, FG_eval>(
-      options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
-      constraints_upperbound, fg_eval, solution);
+    // solve the problem
+    CppAD::ipopt::solve<Dvector, FG_eval>(
+                                          options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
+                                          constraints_upperbound, fg_eval, solution);
     
-  // Check some of the solution values
-  ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
+    // Check some of the solution values
+    ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
     
-  // Cost
-  auto cost = solution.obj_value;
-  std::cout << "Cost " << cost << std::endl;
-
-  // TODO: Return the first actuator values. The variables can be accessed with
-  // `solution.x[i]`.
-  //
-  // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
-  // creates a 2 element double vector.
-    vector<double> final_output;
-    //for(int i=0;i<N-1;i++){
-    //    final_output.push_back(solution.x[x_start+i]);
-    //    final_output.push_back(solution.x[y_start+i]);
-   // }
-    cout<<"4"<<endl;
-	final_output.push_back(solution.x[delta_start]);
-	final_output.push_back(solution.x[a_start]);
-	for(int i=0;i<N-2;i++){
-		final_output.push_back(solution.x[x_start + i +1]);
-		final_output.push_back(solution.x[y_start + i +1]);
-	}
-  return final_output;
+    // Cost
+    // auto cost = solution.obj_value;
+    // std::cout << "Cost " << cost << std::endl;
+    
+    // TODO: Return the first actuator values. The variables can be accessed with
+    // `solution.x[i]`.
+    //
+    // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
+    // creates a 2 element double vector.
+    vector<double> result;
+    
+    result.push_back(solution.x[delta_start]);
+    result.push_back(solution.x[a_start]);
+    
+    for ( int i = 0; i < N - 2; i++ ) {
+        result.push_back(solution.x[x_start + i + 1]);
+        result.push_back(solution.x[y_start + i + 1]);
+    }
+    return result;
 }
+//  FG_eval fg_eval(coeffs);
+//
+//  //
+//  // NOTE: You don't have to worry about these options
+//  //
+//  // options for IPOPT solver
+//  std::string options;
+//  // Uncomment this if you'd like more print information
+//  options += "Integer print_level  0\n";
+//  // NOTE: Setting sparse to true allows the solver to take advantage
+//  // of sparse routines, this makes the computation MUCH FASTER. If you
+//  // can uncomment 1 of these and see if it makes a difference or not but
+//  // if you uncomment both the computation time should go up in orders of
+//  // magnitude.
+//  options += "Sparse  true        forward\n";
+//  options += "Sparse  true        reverse\n";
+//  // NOTE: Currently the solver has a maximum time limit of 0.5 seconds.
+//  // Change this as you see fit.
+//  options += "Numeric max_cpu_time          0.5\n";
+//
+//  // place to return solution
+//
+//  CppAD::ipopt::solve_result<Dvector> solution;
+//
+//  // solve the problem
+//
+//  CppAD::ipopt::solve<Dvector, FG_eval>(
+//      options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
+//      constraints_upperbound, fg_eval, solution);
+//
+//  // Check some of the solution values
+//  ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
+//
+//  // Cost
+//  auto cost = solution.obj_value;
+//  std::cout << "Cost " << cost << std::endl;
+//
+//  // TODO: Return the first actuator values. The variables can be accessed with
+//  // `solution.x[i]`.
+//  //
+//  // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
+//  // creates a 2 element double vector.
+//    vector<double> final_output;
+//    //for(int i=0;i<N-1;i++){
+//    //    final_output.push_back(solution.x[x_start+i]);
+//    //    final_output.push_back(solution.x[y_start+i]);
+//   // }
+//    cout<<"4"<<endl;
+//    final_output.push_back(solution.x[delta_start]);
+//    final_output.push_back(solution.x[a_start]);
+//    for(int i=0;i<N-2;i++){
+//        final_output.push_back(solution.x[x_start + i +1]);
+//        final_output.push_back(solution.x[y_start + i +1]);
+//    }
+//  return final_output;
+//}
