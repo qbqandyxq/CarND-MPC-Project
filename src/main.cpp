@@ -64,13 +64,22 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
   auto result = Q.solve(yvals);
   return result;
 }
+/*
+ ptsx (Array) - The global x positions of the waypoints.
+ ptsy (Array) - The global y positions of the waypoints. This corresponds to the z coordinate in Unity since y is the up-down direction.
+ psi (float) - The orientation of the vehicle in radians converted from the Unity format to the standard format expected in most mathemetical functions (more details below).
+ psi_unity (float) - The orientation of the vehicle in radians. This is an orientation commonly used in navigation.
+ x (float) - The global x position of the vehicle.
+ y (float) - The global y position of the vehicle.
+ steering_angle (float) - The current steering angle in radians.
+ throttle (float) - The current throttle value [-1, 1].
+ speed (float) - The current velocity in mph.
+ */
 
 int main() {
   uWS::Hub h;
-
   // MPC is initialized here!
   MPC mpc;
-
   h.onMessage([&mpc](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -91,17 +100,6 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-            /*
-             ptsx (Array) - The global x positions of the waypoints.
-             ptsy (Array) - The global y positions of the waypoints. This corresponds to the z coordinate in Unity since y is the up-down direction.
-             psi (float) - The orientation of the vehicle in radians converted from the Unity format to the standard format expected in most mathemetical functions (more details below).
-             psi_unity (float) - The orientation of the vehicle in radians. This is an orientation commonly used in navigation.
-             x (float) - The global x position of the vehicle.
-             y (float) - The global y position of the vehicle.
-             steering_angle (float) - The current steering angle in radians.
-             throttle (float) - The current throttle value [-1, 1].
-             speed (float) - The current velocity in mph.
-             */
             double delta= j[1]["steering_angle"];
             double a = j[1]["throttle"];
           /*
@@ -116,10 +114,10 @@ int main() {
             double latency = 0.1;
 //            psi += -v*delta/Lf*latency/2.67;
         size_t n_waypoints = ptsx.size();
-//        auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
-//        auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
-            VectorXd<double> ptsx_transformed(n_waypoints);
-            VectorXd<double> ptsy_transformed(n_waypoints);
+        auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
+        auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
+//            VectorXd<double> ptsx_transformed(n_waypoints);
+//            VectorXd<double> ptsy_transformed(n_waypoints);
             
         for (unsigned int i = 0; i < n_waypoints; i++ ) {
             double dX = ptsx[i] - px;
