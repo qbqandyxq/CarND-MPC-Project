@@ -165,7 +165,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   }
   // object that computes objective and constraints
   FG_eval fg_eval(coeffs);
-    cout<<"2"<<endl;
+    
   //
   // NOTE: You don't have to worry about these options
   //
@@ -185,7 +185,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   options += "Numeric max_cpu_time          0.5\n";
 
   // place to return solution
-    cout<<"22"<<endl;
+    
   CppAD::ipopt::solve_result<Dvector> solution;
 
   // solve the problem
@@ -193,10 +193,10 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   CppAD::ipopt::solve<Dvector, FG_eval>(
       options, vars, vars_lowerbound, vars_upperbound, constraints_lowerbound,
       constraints_upperbound, fg_eval, solution);
-
+    cout<<"33"<<endl;
   // Check some of the solution values
   ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
-
+    cout<<"333"<<endl;
   // Cost
   auto cost = solution.obj_value;
   std::cout << "Cost " << cost << std::endl;
