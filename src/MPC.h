@@ -5,10 +5,9 @@
 #include "Eigen-3.3/Eigen/Core"
 
 class MPC {
-    const size_t N = 10;
-    const double dt=0.05;
-    const double Lf=2.67;
+    
  public:
+    const double Lf=2.67;
   MPC();
 
   virtual ~MPC();

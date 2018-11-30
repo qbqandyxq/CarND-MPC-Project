@@ -126,15 +126,15 @@ int main() {
             ptsx_transformed( i ) = dX * cos( minus_psi ) - dY * sin( minus_psi );
             ptsy_transformed( i ) = dX * sin( minus_psi ) + dY * cos( minus_psi );
         }
-            coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
+            auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
             
             
             //Initial
-            double x0=0;
-            double y0=0;
-            double psi0=0;
-            double cte0=coeffs[0];
-            double epsi0 = psi0 - atan(coeffs[1]);
+            const double x0=0;
+            const double y0=0;
+            const double psi0=0;
+            const double cte0=coeffs[0];
+            const double epsi0 = psi0 - atan(coeffs[1]);
             
             // State after delay.
             double x_delay = x0 + ( v * cos(psi0) * latency );
@@ -164,7 +164,7 @@ int main() {
           //Display the MPC predicted trajectory 
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
-            for(int i=2; i<mpc.N; i+2){
+            for(int i=2; i<vars.size(); i+2){
                 mpc_x_vals.push_back(vars[i]);
                 mpc_y_vals.push_back(vars[i+1]);
             }
