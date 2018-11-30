@@ -24,6 +24,7 @@ using CppAD::AD;
 size_t N=10;
 double dt=0.1;
 const double Lf=2.67;
+double ref_v = 60;
 
 const size_t x_start=0;
 const size_t y_start=x_start+N;
@@ -51,7 +52,7 @@ class FG_eval {
       for(int t=0;t<N; t++){
           fg[0] += CppAD::pow(vars[cte_start+t], 2);
           fg[0] += CppAD::pow(vars[epsi_start+t], 2);
-          fg[0] += CppAD::pow(vars[v_start+t],2);
+          fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
       }
       //Minimisze change-rate
       for(int t= 0;t<N-1;t++){
