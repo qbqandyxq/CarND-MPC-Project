@@ -91,16 +91,69 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-
+            /*
+             ptsx (Array) - The global x positions of the waypoints.
+             ptsy (Array) - The global y positions of the waypoints. This corresponds to the z coordinate in Unity since y is the up-down direction.
+             psi (float) - The orientation of the vehicle in radians converted from the Unity format to the standard format expected in most mathemetical functions (more details below).
+             psi_unity (float) - The orientation of the vehicle in radians. This is an orientation commonly used in navigation.
+             x (float) - The global x position of the vehicle.
+             y (float) - The global y position of the vehicle.
+             steering_angle (float) - The current steering angle in radians.
+             throttle (float) - The current throttle value [-1, 1].
+             speed (float) - The current velocity in mph.
+             
+             */
+            double delta= j[1]["steering_angle"];
+            double a = j[1]["throttle"];
           /*
           * TODO: Calculate steering angle and throttle using MPC.
           *
           * Both are in between [-1, 1].
           *
           */
-          double steer_value;
-          double throttle_value;
+          double steer_value=0.0;
+          double throttle_value=0.0;
+//            100ms latency.
+            double latency = 0.1;
+//            psi += -v*delta/Lf*latency/2.67;
+        size_t n_waypoints = ptsx.size();
+//        auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
+//        auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
+            VectorXd<double> ptsx_transformed(n_waypoints);
+            VectorXd<double> ptsy_transformed(n_waypoints);
+            
+        for (unsigned int i = 0; i < n_waypoints; i++ ) {
+            double dX = ptsx[i] - px;
+            double dY = ptsy[i] - py;
+            double minus_psi = 0.0 - psi;
+            ptsx_transformed( i ) = dX * cos( minus_psi ) - dY * sin( minus_psi );
+            ptsy_transformed( i ) = dX * sin( minus_psi ) + dY * cos( minus_psi );
+        }
+            coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
+            
+            
+            //Initial
+            double x0=0;
+            double y0=0;
+            double psi0=0;
+            double cte0=coeffs[0];
+            double epsi0 = psi0 - atan(coeffs[1]);
+            
+            // State after delay.
+            double x_delay = x0 + ( v * cos(psi0) * latency );
+            double y_delay = y0 + ( v * sin(psi0) * latency );
+            double psi_delay = psi0 - ( v * delta * latency / mpc.Lf );
+            double v_delay = v + a * latency;
+            double cte_delay = cte0 + ( v * sin(epsi0) * latency );
+            double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * latency / mpc.Lf );
+            
+            
+//            double epsi = -atan(coeffs[1]);
+            
+            Eigen::VectorXd state(6);
+            state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
 
+            
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
