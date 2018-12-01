@@ -128,19 +128,29 @@ int main() {
             
             
             //Initial
-            const double x0=0;
-            const double y0=0;
-            const double psi0=0;
-            const double cte0=coeffs[0];
-            const double epsi0 = psi0 - atan(coeffs[1]);
+//            const double x0=0;
+//            const double y0=0;
+//            const double psi0=0;
+//            const double cte0=coeffs[0];
+//            const double epsi0 = psi0 - atan(coeffs[1]);
+            
+//            vector<double> ptsx = j[1]["ptsx"];
+//            vector<double> ptsy = j[1]["ptsy"];
+//            double px = j[1]["x"];
+//            double py = j[1]["y"];
+//            double psi = j[1]["psi"];
+//            double v = j[1]["speed"];
+//            double delta= j[1]["steering_angle"];
+//            double a = j[1]["throttle"];
             
             // State after delay.
-            double x_delay = x0 + ( v * cos(psi0) * latency );
-            double y_delay = y0 + ( v * sin(psi0) * latency );
-            double psi_delay = psi0 - ( v * delta * latency / mpc.Lf );
+            double x_delay = px + ( v * cos(psi) * latency );
+            double y_delay = py + ( v * sin(psi) * latency );
+            double psi_delay = psi - ( v * delta * latency / mpc.Lf );
             double v_delay = v + a * latency;
-            double cte_delay = cte0 + ( v * sin(epsi0) * latency );
-            double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * latency / mpc.Lf );
+            double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
+            double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
+            
 	    Eigen::VectorXd state(6);
             state <<x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
             //get the solution
