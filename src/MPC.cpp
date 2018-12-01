@@ -47,21 +47,21 @@ class FG_eval {
       fg[0]=0;
       // The part of the cost based on the reference state.
       for(int i=0;i<N; i++){
-          fg[0] +=CppAD::pow(vars[cte_start+i], 2);
-          fg[0] += CppAD::pow(vars[epsi_start+i], 2);
+          fg[0] +=1000*CppAD::pow(vars[cte_start+i], 2);
+          fg[0] += 1000*CppAD::pow(vars[epsi_start+i], 2);
           fg[0] += CppAD::pow(vars[v_start+i]-v_,2);
       }
       //Minimisze change-rate
       for(int i = 0;i<N-1;i++){
-          fg[0] += CppAD::pow(vars[delta_start + i], 2);
-          fg[0] += CppAD::pow(vars[a_start + i], 2);
+          fg[0] += 50*CppAD::pow(vars[delta_start + i], 2);
+          fg[0] += 50*CppAD::pow(vars[a_start + i], 2);
       }
       
 //      The goal of this final loop is to make control decisions more consistent, or smoother.
 //      The next control input should be similar to the current one.
       for(int i=0; i<N-2; i++){
-          fg[0] +=CppAD::pow(vars[delta_start + i + 1] - vars[delta_start+i],2);
-          fg[0] +=CppAD::pow(vars[a_start + i +1]- vars[a_start+i],2);
+          fg[0] +=250000*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start+i],2);
+          fg[0] +=5000*CppAD::pow(vars[a_start + i +1]- vars[a_start+i],2);
       }
       // Initial constraints.
       fg[1 + x_start] = vars[x_start];
