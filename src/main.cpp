@@ -127,22 +127,6 @@ int main() {
             auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
             
             
-            //Initial
-//            const double x0=0;
-//            const double y0=0;
-//            const double psi0=0;
-//            const double cte0=coeffs[0];
-//            const double epsi0 = psi0 - atan(coeffs[1]);
-            
-//            vector<double> ptsx = j[1]["ptsx"];
-//            vector<double> ptsy = j[1]["ptsy"];
-//            double px = j[1]["x"];
-//            double py = j[1]["y"];
-//            double psi = j[1]["psi"];
-//            double v = j[1]["speed"];
-//            double delta= j[1]["steering_angle"];
-//            double a = j[1]["throttle"];
-            
             // State after delay.
             double x_delay = px + ( v * cos(psi) * latency );
             double y_delay = py + ( v * sin(psi) * latency );
