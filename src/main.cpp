@@ -108,28 +108,23 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-            // Preprocessing.
-            // Transforms waypoints coordinates to the cars coordinates.
-            size_t n_waypoints = ptsx.size();
-            auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
-            auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
-            for (unsigned int i = 0; i < n_waypoints; i++ ) {
-                double dX = ptsx[i] - px;
-                double dY = ptsy[i] - py;
-                double minus_psi = 0.0 - psi;
-                ptsx_transformed( i ) = dX * cos( minus_psi ) - dY * sin( minus_psi );
-                ptsy_transformed( i ) = dX * sin( minus_psi ) + dY * cos( minus_psi );
-            }
+        double steer_value=0.0;
+        double throttle_value=0.0;
             
-            // Fit polynomial to the points - 3rd order.
-            auto coeffs = polyfit(ptsx_transformed, ptsy_transformed, 3);
+        size_t n_waypoints = ptsx.size();
+        auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
+        auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
             
-            // Actuator delay in milliseconds.
-            const int actuatorDelay =  100;
-            
-            // Actuator delay in seconds.
-            const double delay = actuatorDelay / 1000.0;
-            
+        for (unsigned int i = 0; i < n_waypoints; i++ ) {
+            double dX = ptsx[i] - px;
+            double dY = ptsy[i] - py;
+            ptsx_transformed( i ) = dX * cos( -psi ) - dY * sin( -psi );
+            ptsy_transformed( i ) = dX * sin( -psi ) + dY * cos( -psi );
+        }
+        auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
+        // State after delay.
+        //            100ms latency.
+        double latency = 0.1;
             // Initial state.
             const double x0 = 0;
             const double y0 = 0;
@@ -148,41 +143,17 @@ int main() {
             // Define the state vector.
             Eigen::VectorXd state(6);
             state << x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
-            
-            // Find the MPC solution.
-            auto vars = mpc.Solve(state, coeffs);
-            
-            double steer_value = vars[0]/deg2rad(25);
-            double throttle_value = vars[1];
-//        double steer_value=0.0;
-//        double throttle_value=0.0;
-////            100ms latency.
-//        double latency = 0.1;
 //        v += a*latency;
-//
-//        size_t n_waypoints = ptsx.size();
-//        auto ptsx_transformed = Eigen::VectorXd(n_waypoints);
-//        auto ptsy_transformed = Eigen::VectorXd(n_waypoints);
-//
-//        for (unsigned int i = 0; i < n_waypoints; i++ ) {
-//            double dX = ptsx[i] - px;
-//            double dY = ptsy[i] - py;
-//            ptsx_transformed( i ) = dX * cos( -psi ) - dY * sin( -psi );
-//            ptsy_transformed( i ) = dX * sin( -psi ) + dY * cos( -psi );
-//        }
-//        auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
-//        // State after delay.
-//
 //        double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
 //        double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
 //
 //        Eigen::VectorXd state(6);
 //        state <<0, 0, 0, v,cte_delay, epsi_delay; //cte_delay, epsi_delay;
-//        //get the solution
-//        auto vars = mpc.Solve(state, coeffs);
-//
-//        steer_value=vars[0]/deg2rad(25);
-//        throttle_value = vars[1];
+        //get the solution
+        auto vars = mpc.Solve(state, coeffs);
+	    
+        steer_value=vars[0]/deg2rad(25);
+        throttle_value = vars[1];
             
         json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
