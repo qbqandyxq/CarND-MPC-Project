@@ -56,8 +56,8 @@ class FG_eval {
       }
       //Minimisze change-rate
       for(int t= 0;t<N-1;t++){
-          fg[0] += *CppAD::pow(vars[delta_start + t], 2);
-          fg[0] += *CppAD::pow(vars[a_start + t], 2);
+          fg[0] +=10 *CppAD::pow(vars[delta_start + t], 2);
+          fg[0] +=10 *CppAD::pow(vars[a_start + t], 2);
       }
       
 //      The goal of this final loop is to make control decisions more consistent, or smoother.
