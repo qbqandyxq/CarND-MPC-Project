@@ -112,8 +112,6 @@ int main() {
           double throttle_value=0.0;
 //            100ms latency.
             double latency = 0.1;
-            
-            psi += -v*delta/2.67*latency/2.67;
             v += a*latency;
             
         size_t n_waypoints = ptsx.size();
@@ -123,24 +121,22 @@ int main() {
         for (unsigned int i = 0; i < n_waypoints; i++ ) {
             double dX = ptsx[i] - px;
             double dY = ptsy[i] - py;
-            double minus_psi = 0.0 - psi;
-            ptsx_transformed( i ) = dX * cos( minus_psi ) - dY * sin( minus_psi );
-            ptsy_transformed( i ) = dX * sin( minus_psi ) + dY * cos( minus_psi );
+            ptsx_transformed( i ) = dX * cos( -psi ) - dY * sin( -psi );
+            ptsy_transformed( i ) = dX * sin( -psi ) + dY * cos( -psi );
         }
             auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
             // State after delay.
             
-//            double v += a * latency;
-//            double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
-//            double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-            double cte = polyeval(coeffs, 0);
-            double epsi = -atan(coeffs[1]);
+            double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
+            double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
+//            double cte = polyeval(coeffs, 0);
+//            double epsi = -atan(coeffs[1]);
             
           //  Eigen::VectorXd state(6);
           //  state << 0, 0, 0, v, cte, epsi;
             
 	    Eigen::VectorXd state(6);
-            state <<0, 0, 0, v,cte, epsi; //cte_delay, epsi_delay;
+            state <<0, 0, 0, v,cte_delay, epsi_delay; //cte_delay, epsi_delay;
             //get the solution
             auto vars = mpc.Solve(state, coeffs);
 	    

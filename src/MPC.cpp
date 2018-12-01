@@ -18,11 +18,10 @@ using CppAD::AD;
 //
 // This is the length from front to CoG that has a similar radius.
 //const double Lf = 2.67;
-
+const double Lf=2.67;
 size_t N=10;
 double dt=0.1;
-const double Lf=2.67;
-double ref_v = 60;
+double v_ = 60;
 
 const size_t x_start=0;
 const size_t y_start=x_start+N;
@@ -47,22 +46,22 @@ class FG_eval {
     // the Solver function below.
       fg[0]=0;
       // The part of the cost based on the reference state.
-      for(int t=0;t<N; t++){
-          fg[0] += 100*CppAD::pow(vars[cte_start+t], 2);
-          fg[0] += 100*CppAD::pow(vars[epsi_start+t], 2);
-          fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
+      for(int i=0;i<N; i++){
+          fg[0] += CppAD::pow(vars[cte_start+i], 2);
+          fg[0] += CppAD::pow(vars[epsi_start+i], 2);
+          fg[0] += CppAD::pow(vars[v_start+i]-v_,2);
       }
       //Minimisze change-rate
-      for(int t= 0;t<N-1;t++){
-          fg[0] +=100 *CppAD::pow(vars[delta_start + t], 2);
-          fg[0] +=100 *CppAD::pow(vars[a_start + t], 2);
+      for(int i = 0;i<N-1;i++){
+          fg[0] += CppAD::pow(vars[delta_start + i], 2);
+          fg[0] += CppAD::pow(vars[a_start + i], 2);
       }
       
 //      The goal of this final loop is to make control decisions more consistent, or smoother.
 //      The next control input should be similar to the current one.
-      for(int t=0;t<N-2;t++){
-          fg[0] += 100*CppAD::pow(vars[delta_start +t + 1] - vars[delta_start+t],2);
-          fg[0] += 10*CppAD::pow(vars[a_start +t +1]- vars[a_start+t],2);
+      for(int i=0; i<N-2; i++){
+          fg[0] += 1000*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start+i],2);
+          fg[0] += 1000*CppAD::pow(vars[a_start + i +1]- vars[a_start+i],2);
       }
       // Initial constraints.
       fg[1 + x_start] = vars[x_start];
@@ -75,7 +74,7 @@ class FG_eval {
       for (int i=1; i<N; i++) {
           
           AD<double> x0=vars[x_start+i-1];
-          AD<double> y0=vars[y_start+i];
+          AD<double> y0=vars[y_start+i-1];
           AD<double> psi0=vars[psi_start+i-1];
           AD<double> v0=vars[v_start+i-1];
           AD<double> cte0=vars[cte_start+i-1];
@@ -88,7 +87,7 @@ class FG_eval {
           AD<double> v1=vars[v_start+i];
           AD<double> cte1=vars[cte_start+i];
           AD<double> epsi1=vars[epsi_start + i];
-          //Only consider the actuation at time t.
+          //Only consider the actuation at time i.
           AD<double> delta0 = vars[delta_start+ i -1];
           AD<double> a0 = vars[a_start +i-1];
           
@@ -100,7 +99,7 @@ class FG_eval {
           fg[1 + psi_start + i] = psi1 - (psi0 - v0/Lf * delta0 * dt);
           fg[1 + v_start + i] = v1 - (v0 + a0*dt);
           fg[1 + cte_start + i] = cte1 - ((f0-y0) + (v0*CppAD::sin(epsi0)*dt));
-          fg[1 + epsi_start + i] = epsi1 - ((psi0-psides0) + v0 * delta0/Lf *dt);
+          fg[1 + epsi_start + i] = epsi1 - ((psi0-psides0) - v0 * delta0/Lf *dt);
       }
   }
 };
