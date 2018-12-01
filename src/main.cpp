@@ -121,34 +121,16 @@ int main() {
             ptsx_transformed( i ) = dX * cos( -psi ) - dY * sin( -psi );
             ptsy_transformed( i ) = dX * sin( -psi ) + dY * cos( -psi );
         }
-        auto coeffs = polyfit(ptsy_transformed, ptsy_transformed,3);
+        auto coeffs = polyfit(ptsx_transformed, ptsy_transformed,3);
         // State after delay.
         //            100ms latency.
         double latency = 0.1;
-            // Initial state.
-            const double x0 = 0;
-            const double y0 = 0;
-            const double psi0 = 0;
-            const double cte0 = coeffs[0];
-            const double epsi0 = -atan(coeffs[1]);
+        v += a*latency;
+        double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
+        double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
             
-            // State after delay.
-            double x_delay = x0 + ( v * cos(psi0) * latency );
-            double y_delay = y0 + ( v * sin(psi0) * latency );
-            double psi_delay = psi0 - ( v * delta * latency / mpc.Lf );
-            double v_delay = v + a * latency;
-            double cte_delay = cte0 + ( v * sin(epsi0) * latency );
-            double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-            
-            // Define the state vector.
-            Eigen::VectorXd state(6);
-            state << x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
-//        v += a*latency;
-//        double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
-//        double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-//
-//        Eigen::VectorXd state(6);
-//        state <<0, 0, 0, v,cte_delay, epsi_delay; //cte_delay, epsi_delay;
+	    Eigen::VectorXd state(6);
+        state <<0, 0, 0, v,cte_delay, epsi_delay; //cte_delay, epsi_delay;
         //get the solution
         auto vars = mpc.Solve(state, coeffs);
 	    
