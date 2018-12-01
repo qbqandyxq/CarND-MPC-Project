@@ -164,13 +164,6 @@ int main() {
               next_y_vals.push_back(ptsy_transformed[i]);
               
           }
-//            double poly_inc = 2.5;
-//            int num_points = 10;
-//            for ( int i = 0; i < num_points; i++ ) {
-//                double x = poly_inc * i;
-//                next_x_vals.push_back( x );
-//                next_y_vals.push_back(polyeval(coeffs, x) );
-//            }
 		
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
