@@ -135,7 +135,7 @@ int main() {
         v += a*latency;
             
 	    Eigen::VectorXd state(6);
-        state <<px, py, 0, v,cte, epsi; //cte_delay, epsi_delay;
+        state <<px, py, psi, v,cte, epsi; //cte_delay, epsi_delay;
         //get the solution
         auto vars = mpc.Solve(state, coeffs);
 	    
