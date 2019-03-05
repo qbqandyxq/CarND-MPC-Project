@@ -130,7 +130,7 @@ int main() {
         psi=-v/Lf*delta * latency;
         //double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
         //double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
-        double epsi = - atan(coeffs[1]) - v / Lf * steer_angle * latency;
+        double epsi = - atan(coeffs[1]) - v / mpc.Lf * delta * latency;
         double cte = polyeval(coeffs, 0) - 0 + v * sin(0- atan(coeffs[1])) * latency;
         v += a*latency;
             
