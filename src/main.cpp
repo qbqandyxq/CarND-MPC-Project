@@ -125,11 +125,11 @@ int main() {
         // State after delay.
         //            100ms latency.
         double latency = 0.1;
-        px=v*cos(0)*latency
-        py=v*sin(0)*latency
-        psi=-v/Lf*delta * latency
-        #double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
-        #double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
+        px=v*cos(0)*latency;
+        py=v*sin(0)*latency;
+        psi=-v/Lf*delta * latency;
+        //double cte_delay = coeffs[0] + ( v * sin(-atan(coeffs[1])) * latency );
+        //double epsi_delay = -atan(coeffs[1]) - ( v * atan(coeffs[1]) * latency / mpc.Lf );
         double epsi = - atan(coeffs[1]) - v / Lf * steer_angle * latency;
         double cte = polyeval(coeffs, 0) - 0 + v * sin(0- atan(coeffs[1])) * latency;
         v += a*latency;
