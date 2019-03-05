@@ -78,39 +78,39 @@ More information is only accessible by people who are already enrolled in Term 2
 of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/b1ff3be0-c904-438e-aad3-2b5379f0e0c3/concepts/1a2255a0-e23c-44cf-8d41-39b8a3c8264a)
 for instructions and the project rubric.
 
-## Hints!
+## Implementation
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+- The model
 
-## Call for IDE Profiles Pull Requests
+  x,y: Car's position.
 
-Help your fellow students!
+  Psi: Car's heading direction.
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. We omitted IDE profiles to ensure
-students don't feel pressured to use one IDE or another.
+  v: Velocity.
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+  cte:Cross track error.
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+  epsi: Orientation error.
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+```
+x[t]=x[t-1]+v[t-1]*cos(psi[t-1])*dt
+y[t]=y[t-1]+v[t-1]*sin(psi[t-1])*dt
+psi[t]=psi[t-1]+v[t-1]/Lf*delta[t-1]*dt
+v[t]=v[t-1]+a[t-1]*dt
+cte[t]=f(x[t-1])-y[t-1]+v[t-1]*sin(epsi[t-1])*dt
+epsi[t]=psi[t]-psides[t-1]+v[t-1]*delta[t-1]/Lf*dt
+```
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. Most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+from 49 to 65 in MPC.cpp, are square sum of cute and epsi, square sum of difference actuators and the last part is about control decisions more consistent, or smoother. I spent many time on the parameters.
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+- Timestep Length and Elapsed Duration (N & dt)
 
-## How to write a README
-A well written README file can enhance your project and portfolio and develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+The number of points impacts the controller performance. After trying with `N` from 10 to 20 and `dt` 0.1 to 0.5 seconds, the simulator shows that too many points make the controller run slower, and some times it went wild very easily. After many time of tring, I decided to set N= 10 and dt=0.1 second to have a better result.
+
+- Polynomial Fitting and MPC Preprocessing
+
+This part is in Main.cpp and start from line 114. The waypoints provided by the simulator are transformed to the car coordinate.
+
+- Model Predictive Control with Lantency
+
+For the actuator latency, the value is calculated using the model and the delay interval. This part is in the Main.cpp from line 127 to line 133.
